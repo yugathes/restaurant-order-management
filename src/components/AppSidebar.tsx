@@ -91,13 +91,13 @@ const AppSidebar: React.FC = () => {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild className="w-full">
                 <NavLink 
                   to={item.path} 
                   className={getNavClass}
                   onClick={isMobile ? handleMobileMenuToggle : undefined}
                 >
-                  <span>{!collapsed ? item.title : item.title.charAt(0)}</span>
+                  <span className="w-full">{!collapsed ? item.title : item.title.charAt(0)}</span>
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>

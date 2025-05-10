@@ -80,7 +80,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addItemToOrder = (orderId: string, item: OrderItem) => {
-    setOrders(orders.map(order => {
+    const updatedOrders = orders.map(order => {
       if (order.id === orderId) {
         // Check if item already exists, if so update quantity
         const existingItemIndex = order.items.findIndex(i => i.menuItemId === item.menuItemId);
@@ -99,28 +99,44 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
       return order;
-    }));
+    });
+    
+    setOrders(updatedOrders);
 
+    // Update activeOrder directly with the updated order
     if (activeOrder && activeOrder.id === orderId) {
-      setActiveOrder(orders.find(o => o.id === orderId) || null);
+      const updatedActiveOrder = updatedOrders.find(o => o.id === orderId);
+      if (updatedActiveOrder) {
+        setActiveOrder(updatedActiveOrder);
+      }
     }
     
     toast.success(`Added ${item.name} to order`);
   };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
-    setOrders(orders.map(order => {
+    const updatedOrders = orders.map(order => {
       if (order.id === orderId) {
         return { ...order, status, updatedAt: new Date() };
       }
       return order;
-    }));
+    });
+    
+    setOrders(updatedOrders);
+
+    // Update activeOrder directly with the updated order
+    if (activeOrder && activeOrder.id === orderId) {
+      const updatedActiveOrder = updatedOrders.find(o => o.id === orderId);
+      if (updatedActiveOrder) {
+        setActiveOrder(updatedActiveOrder);
+      }
+    }
 
     toast.success(`Order #${orderId} updated to ${status}`);
   };
 
   const removeItemFromOrder = (orderId: string, itemId: string) => {
-    setOrders(orders.map(order => {
+    const updatedOrders = orders.map(order => {
       if (order.id === orderId) {
         return {
           ...order,
@@ -129,11 +145,16 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         };
       }
       return order;
-    }));
+    });
+    
+    setOrders(updatedOrders);
 
+    // Update activeOrder directly with the updated order
     if (activeOrder && activeOrder.id === orderId) {
-      const updatedOrder = orders.find(o => o.id === orderId);
-      setActiveOrder(updatedOrder || null);
+      const updatedActiveOrder = updatedOrders.find(o => o.id === orderId);
+      if (updatedActiveOrder) {
+        setActiveOrder(updatedActiveOrder);
+      }
     }
     
     toast.success('Item removed from order');
