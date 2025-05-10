@@ -1,12 +1,16 @@
 
 import React, { createContext, useState, useContext } from 'react';
 import { MenuItem } from '../types';
+import { toast } from "@/hooks/use-toast";
 
 interface MenuContextType {
   menuItems: MenuItem[];
   categories: string[];
   getItemsByCategory: (category: string) => MenuItem[];
   getItemById: (id: string) => MenuItem | undefined;
+  addMenuItem: (item: Omit<MenuItem, 'id'>) => void;
+  updateMenuItem: (id: string, item: Partial<MenuItem>) => void;
+  deleteMenuItem: (id: string) => void;
 }
 
 const MenuContext = createContext<MenuContextType>({
@@ -14,6 +18,9 @@ const MenuContext = createContext<MenuContextType>({
   categories: [],
   getItemsByCategory: () => [],
   getItemById: () => undefined,
+  addMenuItem: () => {},
+  updateMenuItem: () => {},
+  deleteMenuItem: () => {},
 });
 
 // Sample menu items for demonstration
@@ -85,7 +92,7 @@ const initialMenuItems: MenuItem[] = [
 ];
 
 export const MenuProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [menuItems] = useState<MenuItem[]>(initialMenuItems);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   
   // Extract unique categories
   const categories = Array.from(new Set(menuItems.map(item => item.category)));
@@ -98,12 +105,46 @@ export const MenuProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return menuItems.find(item => item.id === id);
   };
 
+  const addMenuItem = (item: Omit<MenuItem, 'id'>) => {
+    const newItem = {
+      ...item,
+      id: `${Date.now()}`, // Generate a unique ID
+    };
+    setMenuItems(prev => [...prev, newItem]);
+    toast({
+      title: "Item Added",
+      description: `${item.name} has been added to the menu.`,
+    });
+  };
+
+  const updateMenuItem = (id: string, item: Partial<MenuItem>) => {
+    setMenuItems(prev => 
+      prev.map(menuItem => menuItem.id === id ? { ...menuItem, ...item } : menuItem)
+    );
+    toast({
+      title: "Item Updated",
+      description: `Menu item has been updated.`,
+    });
+  };
+
+  const deleteMenuItem = (id: string) => {
+    const itemToDelete = menuItems.find(item => item.id === id);
+    setMenuItems(prev => prev.filter(item => item.id !== id));
+    toast({
+      title: "Item Deleted",
+      description: itemToDelete ? `${itemToDelete.name} has been removed from the menu.` : "Item removed from the menu.",
+    });
+  };
+
   return (
     <MenuContext.Provider value={{
       menuItems,
       categories,
       getItemsByCategory,
-      getItemById
+      getItemById,
+      addMenuItem,
+      updateMenuItem,
+      deleteMenuItem
     }}>
       {children}
     </MenuContext.Provider>
