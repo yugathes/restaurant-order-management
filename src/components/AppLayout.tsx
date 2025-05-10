@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -26,14 +27,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         
         <div className="flex-1 flex flex-col">
           <header className="bg-white shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
-            <h1 className="text-2xl font-bold text-restaurant-700">
-              Restaurant Order System
-            </h1>
+            <div className="flex items-center gap-2">
+              <div className="md:hidden">
+                <SidebarTrigger>
+                  <Menu className="h-5 w-5" />
+                </SidebarTrigger>
+              </div>
+              <h1 className="text-2xl font-bold text-restaurant-700">
+                Restaurant Order System
+              </h1>
+            </div>
             
             <div className="flex items-center gap-4">
               {currentUser && (
                 <>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 hidden sm:inline">
                     {currentUser.name} ({currentUser.role})
                   </span>
                   <Button 

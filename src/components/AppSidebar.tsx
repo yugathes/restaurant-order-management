@@ -13,7 +13,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 
 const AppSidebar: React.FC = () => {
-  const { state } = useSidebar();
+  const { state, isMobile, openMobile, setOpenMobile } = useSidebar();
   const { currentUser } = useAuth();
   const location = useLocation();
   
@@ -63,6 +63,13 @@ const AppSidebar: React.FC = () => {
         : 'text-gray-600 hover:bg-gray-100'
     }`;
 
+  // Handle mobile menu toggle
+  const handleMobileMenuToggle = () => {
+    if (isMobile) {
+      setOpenMobile(!openMobile);
+    }
+  };
+
   return (
     <Sidebar className={collapsed ? "w-16" : "w-56"} collapsible="icon">
       <SidebarTrigger className="m-2 self-end" />
@@ -85,7 +92,11 @@ const AppSidebar: React.FC = () => {
           {navItems.map((item) => (
             <SidebarMenuItem key={item.path}>
               <SidebarMenuButton asChild>
-                <NavLink to={item.path} className={getNavClass}>
+                <NavLink 
+                  to={item.path} 
+                  className={getNavClass}
+                  onClick={isMobile ? handleMobileMenuToggle : undefined}
+                >
                   <span>{!collapsed ? item.title : item.title.charAt(0)}</span>
                 </NavLink>
               </SidebarMenuButton>
