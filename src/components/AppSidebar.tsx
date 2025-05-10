@@ -13,9 +13,12 @@ import {
 import { useAuth } from '@/context/AuthContext';
 
 const AppSidebar: React.FC = () => {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const { currentUser } = useAuth();
   const location = useLocation();
+  
+  // Check if sidebar is collapsed based on state
+  const collapsed = state === 'collapsed';
 
   // Define different navigation items based on user role
   const getNavigationItems = () => {
@@ -61,7 +64,7 @@ const AppSidebar: React.FC = () => {
     }`;
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-56"} collapsible>
+    <Sidebar className={collapsed ? "w-16" : "w-56"} collapsible="icon">
       <SidebarTrigger className="m-2 self-end" />
       
       <SidebarContent>
