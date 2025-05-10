@@ -15,6 +15,7 @@ import Orders from "./pages/Orders";
 import Kitchen from "./pages/Kitchen";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MenuManagement from "./pages/MenuManagement";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,15 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <Kitchen />
+                      </ProtectedRoute>
+                    }
+                  />
+                  
+                  <Route
+                    path="/menu-management"
+                    element={
+                      <ProtectedRoute>
+                        <MenuManagement />
                       </ProtectedRoute>
                     }
                   />

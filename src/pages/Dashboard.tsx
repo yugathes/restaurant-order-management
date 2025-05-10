@@ -5,11 +5,13 @@ import { useOrders } from '@/context/OrderContext';
 import { useTables } from '@/context/TableContext';
 import AppLayout from '@/components/AppLayout';
 import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { orders } = useOrders();
   const { tables } = useTables();
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   // Calculate statistics
   const newOrders = orders.filter(order => order.status === 'new').length;
@@ -17,13 +19,21 @@ const Dashboard = () => {
   const readyOrders = orders.filter(order => order.status === 'ready').length;
   const occupiedTables = tables.filter(table => table.status === 'occupied').length;
 
+  // Handle navigation to respective pages
+  const handleOrdersClick = () => navigate('/orders');
+  const handleKitchenClick = () => navigate('/kitchen');
+  const handleTableClick = () => navigate('/tables');
+
   return (
     <AppLayout>
       <div className="space-y-6">
         <h2 className="text-3xl font-bold">Welcome, {currentUser?.name || 'User'}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md" 
+            onClick={handleOrdersClick}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">
                 New Orders
@@ -34,7 +44,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md" 
+            onClick={handleKitchenClick}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">
                 Preparing
@@ -45,7 +58,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md" 
+            onClick={handleKitchenClick}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">
                 Ready to Serve
@@ -56,7 +72,10 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card 
+            className="cursor-pointer transition-all hover:shadow-md" 
+            onClick={handleTableClick}
+          >
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">
                 Tables Occupied
@@ -72,13 +91,17 @@ const Dashboard = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="col-span-1">
-            <CardHeader>
+            <CardHeader className="cursor-pointer" onClick={handleOrdersClick}>
               <CardTitle>Recent Orders</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-gray-200">
                 {orders.slice(0, 5).map(order => (
-                  <div key={order.id} className="flex justify-between items-center p-4">
+                  <div 
+                    key={order.id} 
+                    className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
+                    onClick={() => navigate(`/orders?id=${order.id}`)}
+                  >
                     <div>
                       <p className="font-medium">Table {order.tableNumber}</p>
                       <p className="text-sm text-gray-500">{order.items.length} items</p>
@@ -100,7 +123,7 @@ const Dashboard = () => {
           </Card>
           
           <Card className="col-span-1">
-            <CardHeader>
+            <CardHeader className="cursor-pointer" onClick={handleTableClick}>
               <CardTitle>Table Status</CardTitle>
             </CardHeader>
             <CardContent>
@@ -108,11 +131,12 @@ const Dashboard = () => {
                 {tables.map(table => (
                   <div
                     key={table.number}
-                    className={`p-4 rounded-lg border ${
+                    className={`p-4 rounded-lg border cursor-pointer hover:shadow-sm transition-all ${
                       table.status === 'occupied' 
                         ? 'border-restaurant-300 bg-restaurant-50' 
                         : 'border-gray-200'
                     }`}
+                    onClick={() => navigate(`/tables?table=${table.number}`)}
                   >
                     <p className="font-medium">Table {table.number}</p>
                     <p className={`text-sm ${
