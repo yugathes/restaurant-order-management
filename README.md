@@ -1,73 +1,122 @@
-# Welcome to your Lovable project
+# Restaurant Order Management System
 
-## Project info
+## Overview
 
-**URL**: https://lovable.dev/projects/1cb07bc1-8fdf-423a-b05a-5bd6e5f401e2
+A role-based restaurant operations platform built as a single-page application. It streamlines the full order lifecycle — from table assignment and item selection through kitchen preparation to completion — replacing paper tickets and fragmented workflows with a unified, real-time interface.
 
-## How can I edit this code?
+Designed for small-to-mid-scale restaurant operations, the system gives servers, kitchen staff, and managers distinct, purpose-built views of the same live data, reducing miscommunication and order processing time.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **Role-based access control** — Three discrete roles (Server, Kitchen, Manager) with context-aware navigation and views
+- **Table management** — Visual floor map with real-time available/occupied status and seat capacity
+- **Order lifecycle tracking** — Full state machine: `New → Preparing → Ready → Completed`
+- **Kitchen Display System (KDS)** — Dedicated kitchen view with animated new-order indicators and elapsed time tracking
+- **Menu management** — Full CRUD for menu items with dynamic category support and image URL association
+- **Order item editing** — Add/remove items with quantity control and per-item special instructions
+- **Dashboard analytics** — Live summary cards for active order counts by status and table occupancy at a glance
+- **Persistent sessions** — Authentication state preserved via `localStorage` across page refreshes
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1cb07bc1-8fdf-423a-b05a-5bd6e5f401e2) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+| Layer | Technology |
+|---|---|
+| **UI Framework** | React 18, TypeScript |
+| **Build Tool** | Vite |
+| **Styling** | Tailwind CSS, tailwindcss-animate |
+| **Component Library** | shadcn/ui (Radix UI primitives) |
+| **Routing** | React Router v6 |
+| **State Management** | React Context API (Auth, Menu, Order, Table) |
+| **Server State / Caching** | TanStack React Query v5 |
+| **Form Handling** | React Hook Form + Zod schema validation |
+| **Data Visualization** | Recharts |
 
-**Use your preferred IDE**
+## Architecture
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The application follows a **layered Context + Component** architecture:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```
+src/
+├── context/        # Global state slices (AuthContext, MenuContext, OrderContext, TableContext)
+├── pages/          # Route-level view components (Dashboard, Orders, Kitchen, Tables, MenuManagement)
+├── components/     # Shared UI primitives and layout (AppLayout, AppSidebar, ProtectedRoute)
+├── types/          # Centralized TypeScript domain types (Order, Table, MenuItem, User, Role)
+└── hooks/          # Reusable custom hooks
+```
 
-Follow these steps:
+State is managed through four isolated React Contexts, keeping domain concerns separate. Route guards via `ProtectedRoute` enforce authentication before rendering any protected view. Form validation is schema-driven using Zod, decoupling validation rules from component logic.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Setup & Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**Prerequisites:** Node.js ≥ 18, npm ≥ 9
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+# Clone the repository
+git clone https://github.com/yugathes/restaurant-order-management.git
+cd restaurant-order-management
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**Demo credentials** (no password required — match username exactly):
 
-**Use GitHub Codespaces**
+| Username | Role |
+|---|---|
+| `Server User` | Server |
+| `Kitchen User` | Kitchen |
+| `Manager User` | Manager |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+# Production build
+npm run build
 
-## What technologies are used for this project?
+# Preview production build locally
+npm run preview
+```
 
-This project is built with:
+## Key Views
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Route | Description |
+|---|---|
+| `/` | Dashboard — live order status summary and table occupancy overview |
+| `/tables` | Table floor map — create new orders or view active orders per table |
+| `/orders` | Order management — add/remove items, set quantities, update order status |
+| `/kitchen` | Kitchen Display — queue of active orders with elapsed time and status controls |
+| `/menu-management` | Menu CRUD — add, edit, and delete items across dynamic categories |
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/1cb07bc1-8fdf-423a-b05a-5bd6e5f401e2) and click on Share -> Publish.
+The application is a static SPA and can be deployed to any static hosting provider.
 
-## Can I connect a custom domain to my Lovable project?
+**Recommended platforms:**
+- **Vercel** — `vercel --prod` after linking the repository
+- **Netlify** — drag-and-drop the `dist/` folder or connect via Git with auto-deploy
+- **GitHub Pages** — configure Vite's `base` path and deploy the `dist/` output
 
-Yes, you can!
+```bash
+npm run build
+# Deploy the generated dist/ directory
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+For custom domain setup, configure DNS A/CNAME records to point to your hosting provider and update the app's base URL in `vite.config.ts` if deploying to a subpath.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Future Improvements
+
+- **Backend API integration** — Replace mock context state with a REST or GraphQL API (e.g., Node.js/Express, Laravel) and persistent database (PostgreSQL, MySQL)
+- **WebSocket / SSE support** — Push real-time order updates to kitchen and server views without polling
+- **Receipt & billing module** — Generate itemised bills, apply discounts, and record payment methods
+- **Inventory tracking** — Link menu items to stock levels and auto-flag out-of-stock items
+- **Analytics dashboard** — Revenue trends, peak-hour heatmaps, and item popularity reports using Recharts
+- **Multi-tenant support** — Namespace data per restaurant branch with tenant-aware routing
+- **PWA / offline mode** — Service worker caching for resilience in low-connectivity kitchen environments
+
+## Author
+
+**Yugathes**
+[github.com/yugathes](https://github.com/yugathes)
